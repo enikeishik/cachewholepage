@@ -13,7 +13,7 @@ allow to cache whole page output.
 Install (or update) package via [composer](http://getcomposer.org/):
 
 ```bash
-composer install enikeishik/cachewholepage
+composer require enikeishik/cachewholepage
 ```
 
 Make sure autoload will be changed:

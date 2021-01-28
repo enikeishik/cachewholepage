@@ -30,7 +30,7 @@ class CWPMiddleware
             return $next($request);
         }
         
-        $key = $request->fullUrl();
+        $key = md5($request->fullUrl());
         if (Cache::has($key)) {
             return response(Cache::get($key));
         }
