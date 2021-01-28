@@ -1,0 +1,27 @@
+{
+  "name": "enikeishik/cachewholepage",
+  "type": "library",
+  "description": "CacheWholePage package for Laravel framework - allow to cache whole page output.",
+  "keywords": ["cache","caching","laravel","framework","package","web"],
+  "license": "GPL-2.0-or-later",
+  "version": "1.0.0",
+  "authors": [
+      {
+        "name": "Enikeishik",
+        "email": "enikeishik@gmail.com",
+        "role": "Developer"
+      }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Enikeishik\\CacheWholePage\\": "src"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Enikeishik\\CacheWholePage\\CWPServiceProvider"
+      ]
+    }
+  }
+}
