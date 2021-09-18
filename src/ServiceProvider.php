@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace Enikeishik\CacheWholePage;
 
-class CWPServiceProvider extends \Illuminate\Support\ServiceProvider
+class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     public function boot()
     {
@@ -19,6 +19,7 @@ class CWPServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__ . '/../config' => config_path(),
         ], 'config');
         
-        $this->app['router']->aliasMiddleware('cachewholepage', \Enikeishik\CacheWholePage\CWPMiddleware::class);
+        $this->app['router']->aliasMiddleware('cachewholepage', \Enikeishik\CacheWholePage\Middleware::class);
+        $this->app['router']->pushMiddlewareToGroup('web', \Enikeishik\CacheWholePage\Middleware::class);
     }
 }
