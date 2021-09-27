@@ -54,7 +54,7 @@ class Middleware
         $excludes = (array) (config('cachewholepage.excludes') ?? []);
         $segment1 = $request->segment(1);
         
-        if (in_array($segment1, $excludes) || !Auth::guest()) {
+        if (in_array($segment1, $excludes) || !Auth::guest() || !$request->isMethod('GET')) {
             return $next($request);
         }
 
