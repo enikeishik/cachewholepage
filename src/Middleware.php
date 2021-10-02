@@ -30,7 +30,19 @@ class Middleware
      * @var string
      */
     protected const DATA_GENERATION_SKIPPED = self::LOG_MESSAGE_PREFIX . 
-        'Generation of data was skipped, data generated in another proccess';
+        'Generation skipped for ';
+    
+    /**
+     * @var string
+     */
+    protected const LOCK_TIMEOUT_EXCEPTION = self::LOG_MESSAGE_PREFIX . 
+        'LockTimeoutException for ';
+    
+    /**
+     * @var string
+     */
+    protected const UNKNOWN_EXCEPTION = self::LOG_MESSAGE_PREFIX . 
+        'Catch Throwable for ';
     
     /**
      * @var int
@@ -51,6 +63,8 @@ class Middleware
      */
     public function handle($request, Closure $next)
     {
+        $usageLogging = true === config('cachewholepage.usage_logging');
+        
         $excludes = (array) (config('cachewholepage.excludes') ?? []);
         $segment1 = $request->segment(1);
         
@@ -63,7 +77,8 @@ class Middleware
             return $next($request);
         }
         
-        $key = md5($request->fullUrl());
+        $url = $request->fullUrl();
+        $key = md5($url);
         
         $value = Cache::get($key);
         if (null !== $value) {
@@ -82,17 +97,19 @@ class Middleware
             if ($lock->block($lockTtl)) {
                 $value = Cache::get($key);
                 if (null !== $value) {
-                    Log::info(self::DATA_GENERATION_SKIPPED);
+                    if ($usageLogging) {
+                        Log::info(self::DATA_GENERATION_SKIPPED . $url);
+                    }
                     return response($value);
                 }
         
                 $value = $next($request);
             }
         } catch (LockTimeoutException $e) {
-            Log::notice(self::LOG_MESSAGE_PREFIX . "LockTimeoutException\t" . $e->getMessage());
+            Log::notice(self::LOCK_TIMEOUT_EXCEPTION . $url . "\t" . $e->getMessage());
             abort(503);
         } catch (Throwable $e) {
-            Log::error(self::LOG_MESSAGE_PREFIX . "Throwable\t" . $e->getMessage());
+            Log::error(self::UNKNOWN_EXCEPTION . $url . "\t" . $e->getMessage());
             abort(500);
         } finally {
             $lock->release();
