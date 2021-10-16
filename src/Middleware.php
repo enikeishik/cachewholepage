@@ -115,7 +115,7 @@ class Middleware
             $lock->release();
         }
         
-        if (null !== $value) {
+        if (null !== $value && 200 === $value->status()) {
             Cache::put($key, $value->getContent(), $ttl);
         }
         
